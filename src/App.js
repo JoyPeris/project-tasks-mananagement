@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Home from "./components/Home";
+import NavBar from "./components/NavBar";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    tasks: [],
+  };
+  //Add Task
+  newTask = (values) => {
+    const newT = {
+      id: "Task " + this.state.tasks.length,
+      ...values,
+    };
+    this.setState({
+      tasks: [...this.state.tasks, newT],
+    });
+  };
+
+  render() {
+    return (
+      <div>
+        <NavBar></NavBar>
+        <Home tasks={this.state.tasks} newTask={this.newTask}></Home>
+      </div>
+    );
+  }
 }
 
 export default App;

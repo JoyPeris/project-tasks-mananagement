@@ -1,3 +1,4 @@
 # project-tasks-mananagement
 Tasks management implementation using Frappe Gantt in reactjs.
-![alt text](http://url/to/img.png)
+
+![add task](https://github.com/JoyPeris/project-tasks-mananagement/blob/master/src/screenshots/Add%20Task.png)

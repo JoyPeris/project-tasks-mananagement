@@ -3,7 +3,14 @@ import TaskItem from "./TaskItem";
 import { ListGroup } from "reactstrap";
 import AddTask from "./AddTask";
 
-const Task = (props) => {
+const Task = ({
+  editTask,
+  tasks,
+  newTask,
+  onRemove,
+
+  updateTask,
+}) => {
   return (
     <div className="container mt-4">
       <ul className="list-inline">
@@ -11,13 +18,20 @@ const Task = (props) => {
           <h2>TASK LIST</h2>
         </li>
         <li className="list-inline-item float-right mt-2">
-          <AddTask tasks={props.tasks} newTask={props.newTask}></AddTask>
+          <AddTask tasks={tasks} newTask={newTask}></AddTask>
         </li>
       </ul>
 
       <ListGroup>
-        {props.tasks.map((task) => (
-          <TaskItem key={task.id} task={task}></TaskItem>
+        {tasks.map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            onRemove={onRemove}
+            editTask={editTask}
+            updateTask={updateTask}
+            tasks={tasks}
+          ></TaskItem>
         ))}
       </ListGroup>
     </div>

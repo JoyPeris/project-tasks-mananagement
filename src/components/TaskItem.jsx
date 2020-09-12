@@ -2,8 +2,17 @@ import React, { useState } from "react";
 import { ListGroupItem } from "reactstrap";
 import { Collapse, Button, CardBody, Card } from "reactstrap";
 import { Tooltip } from "reactstrap";
+import EditTaskForm from "./EditTaskForm";
+import DeleteTask from "./DeleteTask";
 
-const TaskItem = (props) => {
+const TaskItem = ({
+  task,
+  onRemove,
+  editTask,
+
+  updateTask,
+  tasks,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -18,14 +27,8 @@ const TaskItem = (props) => {
   return (
     <div>
       <ListGroupItem>
-        <Button
-          id="details"
-          outline
-          color="primary"
-          onClick={toggle}
-          // style={{ marginBottom: "1rem" }}
-        >
-          {props.task.name}
+        <Button id="details" outline color="primary" onClick={toggle}>
+          {task.name}
           <i className="fa fa-angle-double-down ml-5 mt-2 mb-2 mr-2"></i>
         </Button>
         <Tooltip
@@ -39,47 +42,43 @@ const TaskItem = (props) => {
         <Collapse isOpen={isOpen}>
           <Card>
             <CardBody>
-              <p>Startdate: {props.task.start}</p>
-              <p>End date: {props.task.end}</p>
-              <p>Progress: {props.task.progress}</p>
-              <p>Dependencies: {props.task.dependencies}</p>
+              <p>Startdate: {task.start}</p>
+              <p>End date: {task.end}</p>
+              <p>Progress: {task.progress}</p>
+              <p>Dependencies: {task.dependencies}</p>
             </CardBody>
           </Card>
         </Collapse>
         <div className=" float-right">
-          <button
-            className="btn btn-success btn-sm rounded-0 m-2 "
-            type="button"
-            id="edit"
-            title="Edit"
-          >
-            <i className="fa fa-edit"></i>
-          </button>
-          <Tooltip
-            placement="top"
-            isOpen={edittipOpen}
-            target="edit"
-            toggle={toggleEditToolTip}
-          >
-            Edit
-          </Tooltip>
+          <ul className="list-inline">
+            <li className="list-inline-item">
+              <EditTaskForm
+                updateTask={updateTask}
+                task={task}
+                tasks={tasks}
+              ></EditTaskForm>
+              <Tooltip
+                placement="top"
+                isOpen={edittipOpen}
+                target="edit"
+                toggle={toggleEditToolTip}
+              >
+                Edit
+              </Tooltip>
+            </li>
+            <li className="list-inline-item float-right ">
+              <DeleteTask onRemove={onRemove} task={task}></DeleteTask>
 
-          <button
-            className="btn btn-danger btn-sm rounded-0 m-2 "
-            type="button"
-            id="delete"
-            title="Delete"
-          >
-            <i className="fa fa-trash"></i>
-          </button>
-          <Tooltip
-            placement="top"
-            isOpen={tooltipOpen}
-            target="delete"
-            toggle={toggleDeleteToolTip}
-          >
-            Delete
-          </Tooltip>
+              <Tooltip
+                placement="top"
+                isOpen={tooltipOpen}
+                target="delete"
+                toggle={toggleDeleteToolTip}
+              >
+                Delete
+              </Tooltip>
+            </li>
+          </ul>
         </div>
       </ListGroupItem>
     </div>

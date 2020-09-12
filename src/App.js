@@ -1,30 +1,44 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
+import uuid from "react-uuid";
 
-class App extends Component {
-  state = {
-    tasks: [],
-  };
-  //Add Task
-  newTask = (values) => {
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+
+  function newTask(values) {
+    console.log(values);
     const newT = {
-      id: "Task " + this.state.tasks.length,
+      id: uuid(),
       ...values,
     };
-    this.setState({
-      tasks: [...this.state.tasks, newT],
-    });
-  };
-
-  render() {
-    return (
-      <div>
-        <NavBar></NavBar>
-        <Home tasks={this.state.tasks} newTask={this.newTask}></Home>
-      </div>
-    );
+    setTasks([...tasks, newT]);
   }
-}
+  //delete Task
+  function deleteTask(id) {
+    const newTaskList = tasks.filter((task) => task.id !== id);
+    setTasks([...newTaskList]);
+  }
+  //edit
+
+  const updateTask = (id, updatedTask) => {
+    setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+  };
+  const editTask = (task) => {
+    console.log(task);
+  };
+  return (
+    <div>
+      <NavBar></NavBar>
+      <Home
+        editTask={editTask}
+        tasks={tasks}
+        newTask={newTask}
+        onRemove={deleteTask}
+        updateTask={updateTask}
+      ></Home>
+    </div>
+  );
+};
 
 export default App;

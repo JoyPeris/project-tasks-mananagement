@@ -12,38 +12,34 @@ import {
   Input,
 } from "reactstrap";
 
-const AddTask = (props) => {
-  const [values, setValues] = useState({
-    name: "",
-    start: "",
-    end: "",
-    progress: 0,
-    dependencies: "",
-  });
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
+const EditTaskForm = (props) => {
+  const [currentTask, setCurrentTask] = useState(props.task);
+
   const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+    setCurrentTask({ ...currentTask, [prop]: event.target.value });
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    props.newTask(values);
-    setValues({
-      name: "",
-      start: "",
-      end: "",
-      progress: 0,
-      dependencies: "",
-    });
+    props.updateTask(currentTask.id, currentTask);
+  };
+  const [modal, setModal] = useState(false);
+  const toggle = () => {
+    setModal(!modal);
   };
   return (
     <div>
-      <Button color="primary" onClick={toggle}>
-        ADD TASK
-      </Button>
+      <button
+        className="btn btn-success btn-sm rounded-0 m-2 "
+        type="button"
+        id="edit"
+        title="Edit"
+        onClick={toggle}
+      >
+        <i className="fa fa-edit"></i>
+      </button>
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>ADD TASK</ModalHeader>
+        <ModalHeader toggle={toggle}>EDIT TASK</ModalHeader>
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <FormGroup>
@@ -52,7 +48,7 @@ const AddTask = (props) => {
                 type="text"
                 name="address"
                 id="title"
-                value={values.name}
+                value={currentTask.name}
                 onChange={handleChange("name")}
               />
             </FormGroup>
@@ -65,7 +61,7 @@ const AddTask = (props) => {
                     name="startdate"
                     id="startDate"
                     placeholder="date placeholder"
-                    value={values.start}
+                    value={currentTask.start}
                     onChange={handleChange("start")}
                   />
                 </FormGroup>
@@ -78,7 +74,7 @@ const AddTask = (props) => {
                     name="enddate"
                     id="endDate"
                     placeholder="date placeholder"
-                    value={values.end}
+                    value={currentTask.end}
                     onChange={handleChange("end")}
                   />
                 </FormGroup>
@@ -91,10 +87,11 @@ const AddTask = (props) => {
                 type="select"
                 name="dependency"
                 id="dependency"
-                onClick={handleChange("dependencies")}
+                value={currentTask.dependencies}
+                onChange={handleChange("dependencies")}
               >
                 {props.tasks.map((task) => (
-                  <option value={task.id} key={task.id}>
+                  <option value={task.name} key={task.id}>
                     {task.name}
                   </option>
                 ))}
@@ -106,13 +103,13 @@ const AddTask = (props) => {
                 type="number"
                 name="progress"
                 id="progress"
-                value={values.progress}
+                value={currentTask.progress}
                 onChange={handleChange("progress")}
               />
             </FormGroup>
 
             <Button type="submit" color="primary" onClick={toggle}>
-              SAVE TASK
+              UPDATE TASK
             </Button>
           </Form>
         </ModalBody>
@@ -121,4 +118,4 @@ const AddTask = (props) => {
   );
 };
 
-export default AddTask;
+export default EditTaskForm;

@@ -2,9 +2,22 @@ import React, { useState } from "react";
 import { FrappeGantt } from "frappe-gantt-react";
 import { Button, Jumbotron, Container } from "reactstrap";
 import "./frappe-gantt.css";
+import Moment from "moment";
 
 const Gantt = (props) => {
   const [mode, setMode] = useState("Day");
+
+  const handleDateChange = (task, start, end) => {
+    task.start = Moment(start).format("YYYY-MM-DD");
+    task.end = Moment(end).format("YYYY-MM-DD");
+    props.updateTask(task.id, task);
+  };
+
+  const handleProgressChange = (task, progress) => {
+    task.progress = progress;
+    props.updateTask(task.id, task);
+  };
+
   const handleViewMode = (e) => {
     setMode(e.target.value);
   };
@@ -23,8 +36,12 @@ const Gantt = (props) => {
           tasks={props.tasks}
           viewMode={mode}
           onClick={(task) => console.log(task)}
-          onDateChange={(task, start, end) => console.log(task, start, end)}
-          onProgressChange={(task, progress) => console.log(task, progress)}
+          onDateChange={(task, start, end) =>
+            handleDateChange(task, start, end)
+          }
+          onProgressChange={(task, progress) =>
+            handleProgressChange(task, progress)
+          }
           onTasksChange={(tasks) => console.log(tasks)}
         />
         <Button

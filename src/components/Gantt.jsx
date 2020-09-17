@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FrappeGantt } from "frappe-gantt-react";
-import { Button, Jumbotron, Container } from "reactstrap";
+import { Button, Skeleton, PageHeader } from "antd";
 import "./frappe-gantt.css";
 import Moment from "moment";
 
@@ -18,16 +18,17 @@ const Gantt = (props) => {
     props.updateTask(task.id, task);
   };
 
-  const handleViewMode = (e) => {
-    setMode(e.target.value);
-  };
   if (props.tasks.length === 0) {
     return (
-      <Jumbotron fluid className="m-2">
-        <Container fluid>
-          <h1 className="display-3">NO TASKS IN PROJECT</h1>
-        </Container>
-      </Jumbotron>
+      <div>
+        <PageHeader
+          className="site-page-header"
+          onBack={() => null}
+          title="NO TASKS, ADD TASKS"
+          subTitle="This is a subtitle"
+        />
+        <Skeleton></Skeleton>
+      </div>
     );
   } else {
     return (
@@ -44,30 +45,15 @@ const Gantt = (props) => {
           }
           onTasksChange={(tasks) => console.log(tasks)}
         />
-        <Button
-          color="primary"
-          value="Day"
-          className="m-2"
-          onClick={handleViewMode}
-        >
+        <Button type="primary" className="m-2" onClick={() => setMode("Day")}>
           DAY
         </Button>
 
-        <Button
-          color="primary"
-          value="Week"
-          className="m-2"
-          onClick={handleViewMode}
-        >
+        <Button type="primary" className="m-2" onClick={() => setMode("Week")}>
           WEEK
         </Button>
 
-        <Button
-          color="primary"
-          value="Month"
-          className="m-2"
-          onClick={handleViewMode}
-        >
+        <Button type="primary" className="m-2" onClick={() => setMode("Month")}>
           MONTH
         </Button>
       </div>

@@ -1,38 +1,31 @@
-import React, { useState } from "react";
-import { Button, Modal, ModalHeader, ModalFooter } from "reactstrap";
+import React from "react";
+import { Modal, Button } from "antd";
+import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 const DeleteTask = (props) => {
-  const [modal, setModal] = useState(false);
+  const { confirm } = Modal;
 
-  const toggle = () => setModal(!modal);
-
+  function showConfirm() {
+    confirm({
+      title: "Do you Want to delete this task?",
+      icon: <ExclamationCircleOutlined />,
+      content: props.task.name,
+      onOk() {
+        props.onRemove(props.task.id);
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  }
   return (
-    <div>
-      <button
-        className="btn btn-danger btn-sm rounded-0 m-2 "
-        type="button"
-        id="delete"
-        title="Delete"
-        onClick={toggle}
-      >
-        <i className="fa fa-trash"></i>
-      </button>
-
-      <Modal isOpen={modal} toggle={toggle} className={props.className}>
-        <ModalHeader toggle={toggle}>
-          ARE YOU SURE YOU WANT TO DELETE TASK?
-        </ModalHeader>
-
-        <ModalFooter>
-          <Button color="danger" onClick={() => props.onRemove(props.task.id)}>
-            YES
-          </Button>
-          <Button color="secondary" onClick={toggle}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
-    </div>
+    <Button
+      type="primary"
+      danger
+      onClick={showConfirm}
+      icon={<DeleteOutlined />}
+    ></Button>
   );
 };
 

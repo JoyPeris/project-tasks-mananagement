@@ -1,121 +1,137 @@
 import React, { useState } from "react";
 import {
-  Button,
   Modal,
-  ModalHeader,
-  ModalBody,
-  Col,
-  Row,
+  Button,
   Form,
-  FormGroup,
-  Label,
   Input,
-} from "reactstrap";
+  DatePicker,
+  InputNumber,
+  Select,
+} from "antd";
+import Moment from "moment";
+
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
 
 const AddTask = (props) => {
-  const [values, setValues] = useState({
-    name: "",
-    start: "",
-    end: "",
-    progress: 0,
-    dependencies: "",
-  });
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+  const dateFormat = "YYYY-MM-DD";
+  const { Option } = Select;
+  const children = [];
+
+  props.tasks.map((task) =>
+    children.push(<Option key={task.id}>{task.name}</Option>)
+  );
+
+  const { RangePicker } = DatePicker;
+
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => {
+    setVisible(true);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    props.newTask(values);
-    setValues({
-      name: "",
-      start: "",
-      end: "",
-      progress: 0,
-      dependencies: "",
-    });
+  const handleOk = (e) => {
+    console.log(e);
+    setVisible(false);
   };
+
+  const handleCancel = (e) => {
+    console.log(e);
+    setVisible(false);
+  };
+  const [form] = Form.useForm();
+  const onFinish = (values) => {
+    const range = values["dates"];
+    let dependency = [];
+    if (props.tasks.length > 0) {
+      dependency = values["dependencies"];
+    }
+    const v = {
+      name: values["name"],
+      start: Moment(range[0].format()).format("YYYY-MM-DD"),
+      end: Moment(range[1].format()).format("YYYY-MM-DD"),
+      progress: values["progress"],
+      dependencies: dependency,
+    };
+
+    props.newTask(v);
+    console.log("Received values of form: ", v);
+    console.log("Success:", values);
+    form.resetFields();
+    setVisible(false);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const handleDateChange = (range) => {
+    const r1 = Moment(range[0].format()).format("YYYY-MM-DD");
+    const r2 = Moment(range[1].format()).format("YYYY-MM-DD");
+
+    console.log(r1, r2);
+  };
+
   return (
     <div>
-      <Button color="primary" onClick={toggle}>
+      <Button type="primary" onClick={showModal}>
         ADD TASK
       </Button>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>ADD TASK</ModalHeader>
-        <ModalBody>
-          <Form onSubmit={onSubmit}>
-            <FormGroup>
-              <Label for="exampleAddress">Task title:</Label>
-              <Input
-                type="text"
-                name="address"
-                id="title"
-                value={values.name}
-                onChange={handleChange("name")}
-              />
-            </FormGroup>
-            <Row form>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="exampleEmail">Start date:</Label>
-                  <Input
-                    type="date"
-                    name="startdate"
-                    id="startDate"
-                    placeholder="date placeholder"
-                    value={values.start}
-                    onChange={handleChange("start")}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="examplePassword">End date:</Label>
-                  <Input
-                    type="date"
-                    name="enddate"
-                    id="endDate"
-                    placeholder="date placeholder"
-                    value={values.end}
-                    onChange={handleChange("end")}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
+      <Modal
+        title="ADD TASK"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Cancel
+          </Button>,
+        ]}
+      >
+        <Form
+          {...layout}
+          form={form}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+        >
+          <Form.Item
+            name="name"
+            rules={[{ required: true, message: "Please enter task title" }]}
+          >
+            <Input placeholder="Task title" />
+          </Form.Item>
 
-            <FormGroup>
-              <Label for="exampleAddress2">Dependency:</Label>
-              <Input
-                type="select"
-                name="dependency"
-                id="dependency"
-                onClick={handleChange("dependencies")}
-              >
-                {props.tasks.map((task) => (
-                  <option value={task.id} key={task.id}>
-                    {task.name}
-                  </option>
-                ))}
-              </Input>
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleNumber">Progress:</Label>
-              <Input
-                type="number"
-                name="progress"
-                id="progress"
-                value={values.progress}
-                onChange={handleChange("progress")}
-              />
-            </FormGroup>
+          <Form.Item
+            name="dates"
+            rules={[
+              {
+                required: true,
+                message: "Please enter start date and end date",
+              },
+            ]}
+          >
+            <RangePicker format={dateFormat} onChange={handleDateChange} />
+          </Form.Item>
 
-            <Button type="submit" color="primary" onClick={toggle}>
-              SAVE TASK
-            </Button>
-          </Form>
-        </ModalBody>
+          <Form.Item name="progress">
+            <InputNumber min={1} max={100} placeholder="Progress" />
+          </Form.Item>
+          <Form.Item name="dependencies">
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "100%" }}
+              placeholder="Select dependencies"
+            >
+              {children}
+            </Select>
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form>
       </Modal>
     </div>
   );
